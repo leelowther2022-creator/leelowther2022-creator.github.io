@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lee Lowther — DAML Smart Contract Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  :root {
+    --bg: #0a0c0f;
+    --bg2: #0f1216;
+    --bg3: #141820;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --accent: #00d4aa;
+    --accent2: #0066ff;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --mono: 'JetBrains Mono', monospace;
+    --display: 'Syne', sans-serif;
+  }
+ 
+  html { scroll-behavior: smooth; }
+ 
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+ 
+  .scanline {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none;
+    z-index: 1000;
+  }
+ 
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(10,12,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    padding: 0 2rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+ 
+  .nav-logo {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+ 
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+ 
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+ 
+  .nav-links a:hover { color: var(--accent); }
+ 
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+ 
+  section { padding: 6rem 0; }
+ 
+  .hero {
+    padding: 140px 0 80px;
+    position: relative;
+    overflow: hidden;
+  }
+ 
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 60px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(0,212,170,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+ 
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,212,170,0.08);
+    border: 1px solid rgba(0,212,170,0.2);
+    border-radius: 2px;
+    padding: 6px 14px;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+ 
+  .hero-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+ 
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+ 
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    color: #ffffff;
+    margin-bottom: 1.5rem;
+  }
+ 
+  h1 span { color: var(--accent); }
+ 
+  .hero-sub {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+  }
+ 
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+ 
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    font-family: var(--mono);
+    font-size: 13px;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+ 
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+    font-weight: 500;
+  }
+ 
+  .btn-primary:hover { background: #00f0c0; transform: translateY(-1px); }
+ 
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border2);
+  }
+ 
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+ 
+  .terminal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin: 4rem 0 0;
+    overflow: hidden;
+  }
+ 
+  .terminal-bar {
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+ 
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-red { background: #ff5f57; }
+  .dot-yellow { background: #febc2e; }
+  .dot-green { background: #28c840; }
+ 
+  .terminal-title {
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: 8px;
+    letter-spacing: 0.05em;
+  }
+ 
+  .terminal-body {
+    padding: 1.5rem;
+    font-size: 12px;
+    line-height: 2;
+  }
+ 
+  .t-comment { color: #4b5563; }
+  .t-key { color: #7dd3fc; }
+  .t-val { color: var(--accent); }
+  .t-str { color: #fbbf24; }
+  .t-prompt { color: var(--muted); }
+ 
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+ 
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 60px;
+  }
+ 
+  h2 {
+    font-family: var(--display);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+ 
+  .section-sub {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 3rem;
+    max-width: 500px;
+  }
+ 
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+ 
+  .skill-card {
+    background: var(--bg2);
+    padding: 1.5rem;
+    transition: background 0.2s;
+  }
+ 
+  .skill-card:hover { background: var(--bg3); }
+ 
+  .skill-icon {
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+  }
+ 
+  .skill-name {
+    font-family: var(--display);
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+ 
+  .skill-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+ 
+  .project-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+ 
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--accent);
+  }
+ 
+  .project-card:hover {
+    border-color: var(--border2);
+    transform: translateX(4px);
+  }
+ 
+  .project-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    gap: 1rem;
+  }
+ 
+  .project-title {
+    font-family: var(--display);
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+  }
+ 
+  .project-badge {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+ 
+  .badge-live {
+    background: rgba(0,212,170,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(0,212,170,0.2);
+  }
+ 
+  .project-desc {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+ 
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+ 
+  .tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--muted);
+  }
+ 
+  .project-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 1.25rem;
+    font-size: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: gap 0.2s;
+  }
+ 
+  .project-link:hover { gap: 10px; }
+ 
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+ 
+  .about-text p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.9;
+    margin-bottom: 1rem;
+  }
+ 
+  .about-text p strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+ 
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+ 
+  .stat {
+    background: var(--bg2);
+    padding: 1.5rem;
+    text-align: center;
+  }
+ 
+  .stat-num {
+    font-family: var(--display);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent);
+    display: block;
+  }
+ 
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+ 
+  .contact-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3rem;
+    text-align: center;
+  }
+ 
+  .contact-block h2 { margin-bottom: 1rem; }
+ 
+  .contact-block p {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 2rem;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+ 
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+ 
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+ 
+  @media (max-width: 640px) {
+    nav { padding: 0 1rem; }
+    .nav-links { display: none; }
+    .container { padding: 0 1rem; }
+    .about-grid { grid-template-columns: 1fr; }
+    h1 { letter-spacing: -1px; }
+  }
+</style>
+</head>
+<body>
+ 
+<div class="scanline"></div>
+ 
+<nav>
+  <div class="nav-logo">LL_</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+ 
+<div class="container">
+ 
+  <section class="hero">
+    <div class="hero-tag">Available for freelance</div>
+    <h1>Smart Contract<br>Developer<span>.</span></h1>
+    <p class="hero-sub">
+      Self-taught. Business-minded. Building trustless settlement infrastructure
+      on the Canton Network using DAML. No middlemen. No trust required.
+    </p>
+    <div class="hero-cta">
+      <a href="#contact" class="btn btn-primary">Get in touch &rarr;</a>
+      <a href="https://github.com/leelowther2022-creator/daml-escrow-" target="_blank" class="btn btn-outline">View GitHub</a>
+    </div>
+ 
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <span class="terminal-title">lee@canton ~ daml repl</span>
+      </div>
+      <div class="terminal-body">
+        <div><span class="t-comment">-- Lee Lowther: profile.daml</span></div>
+        <div><span class="t-key">template</span> <span class="t-val">Developer</span></div>
+        <div>&nbsp;&nbsp;<span class="t-key">with</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-key">name</span> : <span class="t-str">"Lee Lowther"</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-key">background</span> : <span class="t-str">"Self-Taught | BA Business Management"</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-key">speciality</span> : <span class="t-str">"DAML / Canton / Atomic DvP Settlement"</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-key">available</span> : <span class="t-val">True</span></div>
+        <div><br></div>
+        <div><span class="t-prompt">&gt;</span> <span class="t-val">Contract created. Awaiting your instruction.</span></div>
+      </div>
+    </div>
+  </section>
+ 
+  <section id="about">
+    <div class="section-label">About</div>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>My pursuit of happiness ultimately led me to digital finance. <strong>The future is being tokenised and I intend to be part of that movement.</strong></p>
+        <p>I'm a self-taught developer with a BA Honours in Business Management from the University of Lincoln. I've launched SaaS products, freelanced for clients, and built software people actually pay for.</p>
+        <p>I don't just write code — <strong>I understand why it needs to exist.</strong> Most DAML developers come from computer science. I come from business. That's the difference.</p>
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-num">BA</span>
+          <div class="stat-label">Business Management</div>
+        </div>
+        <div class="stat">
+          <span class="stat-num">4+</span>
+          <div class="stat-label">SaaS Products Built</div>
+        </div>
+        <div class="stat">
+          <span class="stat-num">100%</span>
+          <div class="stat-label">Self-Taught</div>
+        </div>
+        <div class="stat">
+          <span class="stat-num">0&rarr;1</span>
+          <div class="stat-label">Smart Contract Dev</div>
+        </div>
+      </div>
+    </div>
+  </section>
+ 
+  <section id="skills">
+    <div class="section-label">Core Skills</div>
+    <h2>What I build.</h2>
+    <p class="section-sub">Focused on deterministic settlement systems and atomic financial workflows on distributed ledgers.</p>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-icon">01 / Lang</div>
+        <div class="skill-name">DAML</div>
+        <div class="skill-desc">Smart contract language for distributed ledger applications. Authority model, signatory patterns, choice design.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">02 / Network</div>
+        <div class="skill-name">Canton</div>
+        <div class="skill-desc">Enterprise-grade distributed ledger. Multi-party coordination and privacy-preserving workflows.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">03 / Pattern</div>
+        <div class="skill-name">Atomic DvP</div>
+        <div class="skill-desc">Delivery-versus-Payment settlement. Asset and cash swap atomically in a single transaction.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">04 / Design</div>
+        <div class="skill-name">Contract Lifecycle</div>
+        <div class="skill-desc">Draft &rarr; Active &rarr; Archived. Deterministic transaction design and archive semantics.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">05 / Product</div>
+        <div class="skill-name">SaaS Development</div>
+        <div class="skill-desc">Multiple successful SaaS products built and launched. Full product lifecycle from idea to paying customers.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">06 / Business</div>
+        <div class="skill-name">Commercial Thinking</div>
+        <div class="skill-desc">BA Business Management. I build solutions that solve real commercial problems, not just technical ones.</div>
+      </div>
+    </div>
+  </section>
+ 
+  <section id="projects">
+    <div class="section-label">Projects</div>
+    <h2>Recent work.</h2>
+    <p class="section-sub">Built from scratch. No templates. No courses. Just documentation and persistence.</p>
+ 
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-title">DAML Escrow &mdash; Trustless Settlement</div>
+        <span class="project-badge badge-live">Live on Canton</span>
+      </div>
+      <p class="project-desc">
+        A fully working trustless escrow system built in DAML. Seller proposes, buyer accepts.
+        Seller confirms delivery. Buyer settles &mdash; asset and cash swap atomically in a single
+        transaction. No bank. No lawyer. No middleman. Resolved CONTRACT_NOT_ACTIVE issues
+        and DAML authority model edge cases the hard way.
+      </p>
+      <div class="project-tags">
+        <span class="tag">DAML</span>
+        <span class="tag">Canton</span>
+        <span class="tag">Atomic DvP</span>
+        <span class="tag">Multi-party</span>
+        <span class="tag">EscrowProposal pattern</span>
+      </div>
+      <a href="https://github.com/leelowther2022-creator/daml-escrow-" target="_blank" class="project-link">View on GitHub &rarr;</a>
+    </div>
+ 
+  </section>
+ 
+  <section id="contact">
+    <div class="contact-block">
+      <div class="section-label" style="justify-content:center;">Contact</div>
+      <h2>Let's work together.</h2>
+      <p>
+        Available for freelance DAML / Canton contracts. If you're building
+        settlement infrastructure or digital asset systems and need someone who
+        understands both the code and the commercial problem &mdash; get in touch.
+      </p>
+      <div class="contact-links">
+        <a href="https://www.linkedin.com/in/lee-lowther-7595641b7" target="_blank" class="btn btn-primary">LinkedIn</a>
+        <a href="https://github.com/leelowther2022-creator/daml-escrow-" target="_blank" class="btn btn-outline">GitHub</a>
+      </div>
+    </div>
+  </section>
+ 
+</div>
+ 
+<footer>
+  Lee Lowther &mdash; DAML Smart Contract Developer &mdash; Built in public &mdash; Scunthorpe, UK
+</footer>
+ 
+</body>
+</html>
